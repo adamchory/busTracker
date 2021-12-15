@@ -1,4 +1,4 @@
-// This project will map all the active bus stops on the first bus route in Boston for the MBTA
+ // This project will map all the active bus stops on the first bus route in Boston for the MBTA
 
 // access token for mapbox
 mapboxgl.accessToken = 'pk.eyJ1IjoiYWRhbWNob3J5IiwiYSI6ImNrd3dqdXBmeTA0ZmkycXF0cGttYWQwanUifQ.d_Iy_GNoKw8IR042_lN7xw';
@@ -27,16 +27,22 @@ async function run(){
   //console.log(locations[1].attributes.longitude);   // debugging
   //console.log(locations[1].attributes.latitude);    // debugging
   
-  // i  represents a counter for the current bus stop
-    let i = 0;
-    // while the counter is below the amount of buses
-    while (i < locations.length) {
-      //mark bus stop
-      let marker = new mapboxgl.Marker().setLngLat([locations[i].attributes.longitude, locations[i].attributes.latitude]).addTo(map);
-      //remove marker after 14 seconds
-      setTimeout(() => {marker.remove()}, 14000);
-      i = i + 1; //move to next bus
-    }
+      //for each vehicle
+      locations.forEach((vehicle) => {
+
+        //make a popup with a bus label at each location on the map
+        const popup = new mapboxgl.Popup({closeButton: true})
+          .setLngLat([vehicle.attributes.longitude, vehicle.attributes.latitude])
+          .setHTML(`Bus ${vehicle.attributes.label}`);
+        
+           //make a marker at each location on the map
+        const marker = new mapboxgl.Marker()
+          .setLngLat([vehicle.attributes.longitude, vehicle.attributes.latitude]).setPopup(popup).addTo(map);
+        
+          //remove marker after 14 seconds
+        setTimeout(() => {marker.remove()}, 14000);
+      });
+
   setTimeout(run,15000);
 }
-run();  //calls function "run"
+run();  //calls function "run". recurring
